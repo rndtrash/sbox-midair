@@ -2,7 +2,7 @@
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace Instagib.UI.PostGameScreens.Elements
+namespace MidAir.UI.PostGameScreens.Elements
 {
 	public class WinnerText : Panel
 	{

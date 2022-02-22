@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 
-namespace Instagib.UI.Elements
+namespace MidAir.UI.Elements
 {
 	public class Scrollbar : Panel
 	{

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Instagib
+namespace MidAir
 {
 	public struct Medal
 	{

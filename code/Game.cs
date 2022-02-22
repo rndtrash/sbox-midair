@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Instagib.GameTypes;
-using Instagib.UI;
+﻿using MidAir.GameTypes;
+using MidAir.UI;
 using Sandbox;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Instagib
+namespace MidAir
 {
 	public partial class Game : Sandbox.Game
 	{
-		private static InstagibHud hud;
+		private static MidAirHud hud;
 		public static Game Instance;
 
 		[Net] public BaseGameType GameType { get; set; }
@@ -19,9 +19,9 @@ namespace Instagib
 			Precache.Add( "particles/speed_lines.vpcf" );
 			Precache.Add( "sounds/jump.vsnd" );
 
-			Precache.Add( "weapons/railgun/particles/railgun_beam.vpcf" );
-			Precache.Add( "weapons/railgun/particles/railgun_pulse.vpcf" );
-			Precache.Add( "weapons/railgun/sounds/railgun_fire.vsnd" );
+			Precache.Add( "weapons/rocketlauncher/particles/rocketlauncher_beam.vpcf" );
+			Precache.Add( "weapons/rocketlauncher/particles/rocketlauncher_pulse.vpcf" );
+			Precache.Add( "weapons/rocketlauncher/sounds/rocketlauncher_fire.vsnd" );
 
 			if ( IsClient )
 			{
@@ -30,15 +30,20 @@ namespace Instagib
 
 			if ( IsServer )
 			{
-				hud = new InstagibHud();
+				hud = new MidAirHud();
 
-				if ( Global.MapName.Contains( "ctf" ) ) // TODO: Revisit this, not a great solution
+				switch ( Global.MapName.Split( '_' )[^1] )
 				{
-					GameType = new CtfGameType();
-				}
-				else
-				{
-					GameType = new FfaGameType();
+					case "ascend":
+						GameType = new AscendGameType();
+						break;
+					case "tdm":
+						GameType = new TdmGameType();
+						break;
+					case "ffa":
+					default:
+						GameType = new FfaGameType();
+						break;
 				}
 			}
 
@@ -54,22 +59,6 @@ namespace Instagib
 			cl.Pawn = player;
 			GameType.AssignPlayerTeam( player );
 			player.Respawn();
-		}
-
-		public override void DoPlayerNoclip( Client cl )
-		{
-			if ( cl.PlayerId != InstagibGlobal.AlexSteamId )
-				return;
-
-			base.DoPlayerNoclip( cl );
-		}
-
-		public override void DoPlayerDevCam( Client cl )
-		{
-			if ( cl.PlayerId != InstagibGlobal.AlexSteamId )
-				return;
-
-			base.DoPlayerDevCam( cl );
 		}
 
 		public override void ClientDisconnect( Client cl, NetworkDisconnectionReason reason )
@@ -103,7 +92,7 @@ namespace Instagib
 			if ( pawn.LastAttacker is not Player attacker )
 			{
 				PlayerDiedRpc( To.Single( victim ), null );
-				OnKilledMessage( 0, "", (long)client.PlayerId, client.Name, "died" );
+				OnKilledMessage( 0, "", client.PlayerId, client.Name, "died" );
 				return;
 			}
 
@@ -126,13 +115,15 @@ namespace Instagib
 			PlayerKilledRpc( To.Single( attacker ), attacker, victim, medalArr );
 
 			var attackerClient = attacker.Client;
-			OnKilledMessage( (long)attackerClient.PlayerId, attackerClient.Name, (long)client.PlayerId, client.Name, "Railgun" );
+			OnKilledMessage( attackerClient.PlayerId, attackerClient.Name, client.PlayerId, client.Name, "Rocket Launcher" );
+
+			GameType.OnFrag( attackerClient, victim.Client );
 		}
 
 		[ClientRpc]
 		public void PlayerRespawnRpc()
 		{
-			InstagibHud.currentHud?.OnRespawn();
+			MidAirHud.currentHud?.OnRespawn();
 		}
 
 		[ServerCmd( "recreatehud", Help = "Recreate hud object" )]
@@ -147,14 +138,14 @@ namespace Instagib
 		public void PlayerDiedRpc( Player attacker )
 		{
 			// Attacker, victim
-			InstagibHud.currentHud.OnDeath( attacker?.Client?.Name ?? "Yourself" );
+			MidAirHud.currentHud.OnDeath( attacker?.Client?.Name ?? "Yourself" );
 		}
 
 		[ClientRpc]
 		public void PlayerKilledRpc( Player attacker, Player victim, string[] medals )
 		{
 			// Attacker, victim
-			InstagibHud.currentHud.OnKilledMessage( attacker, victim, medals );
+			MidAirHud.currentHud.OnKilledMessage( attacker, victim, medals );
 		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 
-namespace Instagib.UI.Menus
+namespace MidAir.UI.Menus
 {
 	public class BaseMenu : Menu
 	{
@@ -19,12 +19,12 @@ namespace Instagib.UI.Menus
 
 		public void Toggle()
 		{
-			InstagibHud.currentHud.SetCurrentMenu( new MainMenu() );
+			MidAirHud.currentHud.SetCurrentMenu( new MainMenu() );
 		}
 
 		public void ShowSettings()
 		{
-			InstagibHud.currentHud.SetCurrentMenu( new SettingsMenu() );
+			MidAirHud.currentHud.SetCurrentMenu( new SettingsMenu() );
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using Sandbox.UI;
 
-namespace Instagib.UI.PostGameScreens
+namespace MidAir.UI.PostGameScreens
 {
 	public class BasePostGameScreen : Panel
 	{

@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Instagib.Teams
+namespace MidAir.Teams
 {
 	public static class ClientExtensions
 	{

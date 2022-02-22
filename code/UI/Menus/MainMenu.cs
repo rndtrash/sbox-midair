@@ -1,6 +1,6 @@
 ﻿using Sandbox.UI;
 
-namespace Instagib.UI.Menus
+namespace MidAir.UI.Menus
 {
 	public class MainMenu : BaseMenu
 	{

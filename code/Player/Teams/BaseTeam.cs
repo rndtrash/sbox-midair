@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Instagib.Teams
+namespace MidAir.Teams
 {
 	public partial class BaseTeam : BaseNetworkable
 	{

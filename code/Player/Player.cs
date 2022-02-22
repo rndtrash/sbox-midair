@@ -1,15 +1,20 @@
-﻿using Sandbox;
+﻿using MidAir.UI;
+using MidAir.Weapons;
+using Sandbox;
 using System.Linq;
-using Instagib.UI;
 using Event = Sandbox.Event;
-using Instagib.Weapons;
 
-namespace Instagib
+namespace MidAir
 {
 	public partial class Player : Sandbox.Player
 	{
+		public float DashTimeout => 1.5f;
+		public float DashVelocity => 300f;
+
 		[Net, Local] private TimeSince TimeSinceSpawn { get; set; }
 		public bool IsSpawnProtected => TimeSinceSpawn < 3;
+		[Net] public bool IsInSafeZone { get; set; }
+		[Net, Predicted] public float LastDash { get; set; }
 
 		private Particles speedLines;
 
@@ -60,7 +65,7 @@ namespace Instagib
 			Clothing.DressEntity( this );
 
 			Inventory.DeleteContents();
-			Inventory.Add( new Railgun(), true );
+			Inventory.Add( new RocketLauncher(), true );
 
 			CurrentStreak = 0;
 			CurrentDamageDealt = 0;
@@ -79,6 +84,54 @@ namespace Instagib
 				TakeDamage( DamageInfo.Generic( 10000 ) );
 			}
 
+			if ( Time.Now - LastDash >= DashTimeout && Input.Down( InputButton.Attack2 ) ) // TODO: disable dash if the pawn gets hit by a rocket
+			{
+				LastDash = Time.Now;
+
+				var rot = EyeRotation.Angles().WithPitch( 0 ).ToRotation();
+				Vector3[][] rayDirs = new Vector3[][]
+				{
+					new Vector3[]
+					{
+						rot.Left,
+						rot.Right
+					},
+					new Vector3[]
+					{
+						rot.Forward,
+						rot.Backward
+					}
+				};
+
+				var controller = Controller as PlayerController;
+				var startPos = Position + Vector3.Up * controller.BodyHeight / 2;
+				var newVelocity = Vector3.Zero;
+				foreach ( var oppositeDirs in rayDirs )
+					foreach ( var dir in oppositeDirs )
+					{
+						var r = Trace.Ray( new( startPos, dir ), controller.BodyGirth * 0.75f ).WorldOnly().Run();
+						if ( r.Hit )
+						{
+							newVelocity = r.Normal;
+							break;
+						}
+					}
+
+				if ( newVelocity.IsNearZeroLength && GroundEntity is not null )
+				{
+					newVelocity += rot.Forward;
+				}
+
+				if ( !newVelocity.IsNearZeroLength )
+				{
+					newVelocity = newVelocity.WithZ( 1 ).Normal;
+
+					controller.ClearGroundEntity();
+					Velocity += newVelocity * DashVelocity;
+					controller.JumpEffects();
+				}
+			}
+
 			if ( cl == Local.Client )
 			{
 				GlowActive = false;
@@ -86,16 +139,19 @@ namespace Instagib
 				//
 				// Speed lines
 				//
-				if ( IsClient && Velocity.Length > 500 )
+				if ( IsClient )
 				{
-					speedLines ??= Particles.Create( "particles/speed_lines.vpcf" );
-					var perlinStrength = Velocity.Length.LerpInverse( 500, 700 ) * 0.5f;
-					_ = new Sandbox.ScreenShake.Perlin( 1.0f, 1.0f, perlinStrength, 2.0f * perlinStrength );
-				}
-				else if ( IsClient && Velocity.Length < 600 && speedLines != null )
-				{
-					speedLines?.Destroy();
-					speedLines = null;
+					if ( Velocity.Length > 500 )
+					{
+						speedLines ??= Particles.Create( "particles/speed_lines.vpcf" );
+						var perlinStrength = Velocity.Length.LerpInverse( 500, 700 ) * 0.5f;
+						_ = new Sandbox.ScreenShake.Perlin( 1.0f, 1.0f, perlinStrength, 2.0f * perlinStrength );
+					}
+					else
+					{
+						speedLines?.Destroy();
+						speedLines = null;
+					}
 				}
 
 				return;

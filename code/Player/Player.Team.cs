@@ -1,7 +1,7 @@
 ﻿using Sandbox;
-using Instagib.Teams;
+using MidAir.Teams;
 
-namespace Instagib
+namespace MidAir
 {
 	public partial class Player
 	{

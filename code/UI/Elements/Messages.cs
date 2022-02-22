@@ -4,7 +4,7 @@ using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace Instagib.UI
+namespace MidAir.UI
 {
 	public class MessagesPanel : Panel
 	{

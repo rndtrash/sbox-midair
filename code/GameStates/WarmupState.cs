@@ -1,7 +1,7 @@
 ﻿using System;
 using Sandbox;
 
-namespace Instagib.GameStates
+namespace MidAir.GameStates
 {
 	public class WarmupState : BaseGameState
 	{
@@ -26,7 +26,7 @@ namespace Instagib.GameStates
 
 			stateEnds = 10;
 
-			if ( InstagibGlobal.DebugMode )
+			if ( MidAirGlobal.DebugMode )
 				stateEnds = 1;
 		}
 

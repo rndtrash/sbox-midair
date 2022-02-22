@@ -2,7 +2,7 @@
 using System.Linq;
 using Sandbox;
 
-namespace Instagib.GameStates
+namespace MidAir.GameStates
 {
 	public class BaseGameState
 	{

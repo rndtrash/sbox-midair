@@ -1,7 +1,7 @@
 ﻿using System;
 using Sandbox;
 
-namespace Instagib.Utils
+namespace MidAir.Utils
 {
 	public static class ColorUtils
 	{

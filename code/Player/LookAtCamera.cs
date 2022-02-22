@@ -1,7 +1,7 @@
 ﻿using System;
 using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	public partial class LookAtCamera : Camera
 	{

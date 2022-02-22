@@ -1,8 +1,8 @@
 {
-  "Title": "Alex\u0027s Instagib",
+  "Title": "midair",
   "Type": "game",
-  "Org": "alex",
-  "Ident": "instagib",
+  "Org": "tesa",
+  "Ident": "midair",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -11,5 +11,5 @@
   ],
   "HasCode": true,
   "CodePath": "code",
-  "RootNamespace": "Instagib"
+  "RootNamespace": "MidAir"
 }

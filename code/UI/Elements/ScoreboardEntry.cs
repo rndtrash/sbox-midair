@@ -1,9 +1,9 @@
-﻿using Instagib.Teams;
+﻿using MidAir.Teams;
 using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace Instagib.UI
+namespace MidAir.UI
 {
 	public partial class ScoreboardEntry : Panel
 	{
@@ -16,8 +16,6 @@ namespace Instagib.UI
 		private Label ping;
 		private Label team;
 
-		private Label vip;
-
 		private Image avatar;
 
 		public ScoreboardEntry()
@@ -25,7 +23,6 @@ namespace Instagib.UI
 			AddClass( "entry" );
 
 			avatar = Add.Image( null, "avatar" );
-			vip = Add.Label( "👑", "vip" );
 			playerName = Add.Label( "PlayerName", "name" );
 
 			kills = Add.Label( "k", "kills" );
@@ -78,10 +75,9 @@ namespace Instagib.UI
 			avatar.SetTexture( $"avatar:{Client.PlayerId}" );
 			ping.Text = Client.Ping.ToString();
 			var playerTeam = Client.GetTeam();
-			team.Text = Client.GetTeam().TeamName;
+			team.Text = playerTeam.TeamName;
 
 			SetClass( "me", Client == Local.Client );
-			vip.SetClass( "visible", Client.PlayerId == InstagibGlobal.AlexSteamId );
 		}
 
 		public virtual void UpdateFrom( Client client )

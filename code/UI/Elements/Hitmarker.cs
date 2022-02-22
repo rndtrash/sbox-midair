@@ -1,7 +1,7 @@
 ﻿using Sandbox.UI;
 using System.Threading.Tasks;
 
-namespace Instagib.UI
+namespace MidAir.UI
 {
 	public partial class Hitmarker : Panel
 	{

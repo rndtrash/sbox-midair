@@ -4,7 +4,7 @@ using Sandbox.UI.Construct;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Instagib.UI
+namespace MidAir.UI
 {
 	public partial class Scoreboard<T> : Panel where T : ScoreboardEntry, new()
 	{
@@ -75,7 +75,7 @@ namespace Instagib.UI
 			{
 				if ( panel1 is ScoreboardEntry a && panel2 is ScoreboardEntry b )
 				{
-					return InstagibGlobal.SortClients( a.Client, b.Client );
+					return MidAirGlobal.SortClients( a.Client, b.Client );
 				}
 				return 1;
 			} );

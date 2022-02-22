@@ -1,20 +1,38 @@
-﻿using Instagib.UI.PostGameScreens;
-using Instagib.UI.PostGameScreens.Elements;
+﻿using MidAir.UI.PostGameScreens;
+using MidAir.UI.PostGameScreens.Elements;
 using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
+using System;
 using System.Collections.Generic;
 
-namespace Instagib.GameTypes
+namespace MidAir.GameTypes
 {
 	[Library( "gametype_ffa", Title = "Free for all", Description = "Basic deathmatch game type" )]
 	public partial class FfaGameType : BaseGameType
 	{
+		protected int MaxFrags = 0;
+
 		public FfaGameType()
 		{
 			GameTypeName = "Free-for-all";
 			GameTypeDescription = "";
 			IsExperimental = false;
+		}
+
+		public override void OnFrag( Client who, Client whom )
+		{
+			base.OnFrag( who, whom );
+
+			MaxFrags = Math.Max( who.GetValue( "kills", 0 ), MaxFrags );
+		}
+
+		public override bool GameShouldEnd()
+		{
+			if ( MaxFrags >= MidAirGlobal.FragLimit )
+				return true;
+
+			return base.GameShouldEnd();
 		}
 
 		private static string GetClassForPosition( int position )
@@ -34,7 +52,7 @@ namespace Instagib.GameTypes
 		public override void CreateWinnerElements( EndGameScreen winnerScreen, Panel parent )
 		{
 			var sortedClients = new List<Client>( Client.All );
-			sortedClients.Sort( InstagibGlobal.SortClients );
+			sortedClients.Sort( MidAirGlobal.SortClients );
 			var playersPanel = parent.Add.Panel( "players" );
 			int particleCount = 0;
 

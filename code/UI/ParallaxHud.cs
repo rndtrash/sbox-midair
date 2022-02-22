@@ -1,7 +1,7 @@
 ﻿using Sandbox;
 using Sandbox.UI;
 
-namespace Instagib.UI
+namespace MidAir.UI
 {
 	public class ParallaxHud : Panel
 	{

@@ -1,8 +1,8 @@
-﻿using Instagib.Weapons;
+﻿using MidAir.Weapons;
 using Sandbox;
 using Sandbox.UI;
 
-namespace Instagib.UI
+namespace MidAir.UI
 {
 	public class Crosshair : Label
 	{
@@ -23,9 +23,9 @@ namespace Instagib.UI
 		{
 			base.Tick();
 
-			if ( Local.Pawn is Player { ActiveChild: Railgun railgun } )
+			if ( Local.Pawn is Player { ActiveChild: RocketLauncher rocketlauncher } )
 			{
-				SetClass( "canfire", railgun.TimeSincePrimaryAttack > 1 / railgun.PrimaryRate );
+				SetClass( "canfire", rocketlauncher.TimeSincePrimaryAttack > 1 / rocketlauncher.PrimaryRate );
 			}
 
 			foreach ( var element in elements )

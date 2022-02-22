@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	/// <summary>
 	/// This does movehelper stuff but without player collisions

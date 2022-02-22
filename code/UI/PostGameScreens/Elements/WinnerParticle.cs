@@ -2,7 +2,7 @@
 using Sandbox.UI;
 using System.Threading.Tasks;
 
-namespace Instagib.UI.PostGameScreens.Elements
+namespace MidAir.UI.PostGameScreens.Elements
 {
 	public class WinnerParticle : Label
 	{

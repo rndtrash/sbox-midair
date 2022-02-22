@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sandbox;
 
-namespace Instagib.GameStates
+namespace MidAir.GameStates
 {
 	public class GameFinishedState : BaseGameState
 	{
@@ -15,7 +15,7 @@ namespace Instagib.GameStates
 		{
 			stateEnds = 15;
 
-			if ( InstagibGlobal.DebugMode )
+			if ( MidAirGlobal.DebugMode )
 				stateEnds = 1000;
 		}
 
@@ -46,11 +46,11 @@ namespace Instagib.GameStates
 				if ( sortedMapVotePairs.Count() == 0 )
 				{
 
-					Global.ChangeLevel( InstagibGlobal.GetMaps()[0] );
+					Global.ChangeLevel( MidAirGlobal.GetMaps()[0] );
 				}
 
 				var votedMap = sortedMapVotePairs.First();
-				Global.ChangeLevel( InstagibGlobal.GetMaps()[votedMap.Key] );
+				Global.ChangeLevel( MidAirGlobal.GetMaps()[votedMap.Key] );
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 ﻿using System;
 using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	[Library]
 	public partial class PlayerController : BasePlayerController
@@ -448,6 +448,11 @@ namespace Instagib
 			Velocity = Velocity.WithZ( startz + flMul );
 			Velocity -= new Vector3( 0, 0, Gravity * 0.5f ) * Time.Delta;
 
+			JumpEffects();
+		}
+
+		public void JumpEffects()
+		{
 			Sound.FromWorld( "jump", Position );
 
 			AddEvent( "jump" );

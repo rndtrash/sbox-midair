@@ -1,7 +1,7 @@
-﻿using Instagib.Weapons;
+﻿using MidAir.Weapons;
 using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	public class FirstPersonCamera : Camera
 	{
@@ -38,7 +38,7 @@ namespace Instagib
 			Rotation = pawn.EyeRotation;
 
 			FieldOfView = PlayerSettings.Fov;
-			if ( pawn.ActiveChild is Railgun { IsZooming: true } )
+			if ( pawn.ActiveChild is RocketLauncher { IsZooming: true } )
 			{
 				FieldOfView = PlayerSettings.ZoomedFov;
 			}

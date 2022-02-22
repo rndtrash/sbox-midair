@@ -1,9 +1,9 @@
-﻿using Instagib.UI.PostGameScreens.Elements;
+﻿using MidAir.UI.PostGameScreens.Elements;
 using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace Instagib.UI.PostGameScreens
+namespace MidAir.UI.PostGameScreens
 {
 	public class EndGameScreen : BasePostGameScreen
 	{
@@ -24,9 +24,9 @@ namespace Instagib.UI.PostGameScreens
 
 			var mapList = votePanel.Add.Panel( "map-list" );
 
-			for ( int i = 0; i < InstagibGlobal.GetMaps().Length; i++ )
+			for ( int i = 0; i < MidAirGlobal.GetMaps().Length; i++ )
 			{
-				string mapName = InstagibGlobal.GetMaps()[i];
+				string mapName = MidAirGlobal.GetMaps()[i];
 				var mapPanel = MapVotePanel.FromPackage( mapName, i );
 				mapPanel.Parent = mapList;
 			}

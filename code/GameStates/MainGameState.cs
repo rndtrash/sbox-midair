@@ -1,13 +1,11 @@
-﻿using System;
-using Sandbox;
+﻿using Sandbox;
+using System;
 
-namespace Instagib.GameStates
+namespace MidAir.GameStates
 {
 	public class MainGameState : BaseGameState
 	{
 		public override string StateName() => Game.Instance.GameType.GameTypeName;
-
-		private RealTimeUntil stateEnds;
 
 		public MainGameState() : base()
 		{
@@ -24,19 +22,15 @@ namespace Instagib.GameStates
 				entity.SetInt( "totalHits", 0 );
 			}
 
-			stateEnds = 5 * 60;
-
-			if ( InstagibGlobal.DebugMode )
-				stateEnds = 5;
-			else
-				GameServices.StartGame();
+			Game.Instance.GameType.OnGameStart();
+			GameServices.StartGame();
 		}
 
 		public override void OnKill( Client attackerClient, Client victimClient )
 		{
 			base.OnKill( attackerClient, victimClient );
 
-			if ( !InstagibGlobal.DebugMode )
+			if ( !MidAirGlobal.DebugMode )
 				GameServices.RecordEvent( attackerClient, "killed", victim: victimClient );
 		}
 
@@ -44,13 +38,14 @@ namespace Instagib.GameStates
 		{
 			base.OnDeath( cl );
 
-			if ( !InstagibGlobal.DebugMode )
+			if ( !MidAirGlobal.DebugMode )
 				GameServices.RecordEvent( cl, "died" );
 		}
 
 		public override string StateTime()
 		{
-			var timeEndSpan = TimeSpan.FromSeconds( stateEnds );
+			var ts = Time.Now - Game.Instance.GameType.GameBeginning;
+			var timeEndSpan = TimeSpan.FromSeconds( Math.Max( MidAirGlobal.TimeLimit != 0 ? MidAirGlobal.TimeLimit - ts : ts, 0 ) );
 			var minutes = timeEndSpan.Minutes;
 			var seconds = timeEndSpan.Seconds;
 			return $"{minutes:D2}:{seconds:D2}";
@@ -60,12 +55,11 @@ namespace Instagib.GameStates
 		{
 			base.Tick();
 
-			if ( Game.Instance.GameType.GameShouldEnd() || GetPlayerCount() <= 1 ||
-				stateEnds < 0 )
+			if ( Game.Instance.GameType.GameShouldEnd() || GetPlayerCount() <= 1 )
 			{
 				SetState( new GameFinishedState() );
 
-				if ( !InstagibGlobal.DebugMode )
+				if ( !MidAirGlobal.DebugMode )
 					GameServices.EndGame();
 
 				return;

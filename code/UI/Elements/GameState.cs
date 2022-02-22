@@ -1,6 +1,6 @@
 ﻿using Sandbox.UI;
 
-namespace Instagib.UI.Elements
+namespace MidAir.UI.Elements
 {
 	[UseTemplate]
 	public class GameState : Panel

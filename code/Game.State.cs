@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Instagib.GameStates;
+using MidAir.GameStates;
 using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	public partial class Game
 	{
@@ -16,7 +16,7 @@ namespace Instagib
 		//
 		[Net] public string CurrentStateName { get; set; }
 		[Net] public string CurrentStateTime { get; set; }
-		[Net, Change( "(a, b) => Instagib.UI.InstagibHud.ToggleEndGameScreen( a, b )" )] public bool ShowEndGameScreen { get; set; }
+		[Net, Change( "(a, b) => MidAir.UI.MidAirHud.ToggleEndGameScreen( a, b )" )] public bool ShowEndGameScreen { get; set; }
 		[Net] public bool InPlay { get; set; }
 
 		public struct MapVote
@@ -57,7 +57,7 @@ namespace Instagib
 		[ServerCmd( "vote_fake" )]
 		public static void VoteFake( int index )
 		{
-			if ( !InstagibGlobal.DebugMode )
+			if ( !MidAirGlobal.DebugMode )
 				return;
 
 			Game.Instance?.MapVotes.Add( new MapVote( index, Rand.Int( 0, 1000000000 ) ) );

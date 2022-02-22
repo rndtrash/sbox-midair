@@ -1,4 +1,4 @@
-﻿namespace Instagib.GameStates
+﻿namespace MidAir.GameStates
 {
 	public class WaitingForPlayersState : BaseGameState
 	{

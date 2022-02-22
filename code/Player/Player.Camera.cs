@@ -1,8 +1,8 @@
 ﻿using System;
-using Instagib.UI;
+using MidAir.UI;
 using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	public partial class Player
 	{
@@ -80,10 +80,10 @@ namespace Instagib
 
 			lastHudOffset = zOffset;
 
-			if ( InstagibHud.parallaxPanel != null )
+			if ( MidAirHud.parallaxPanel != null )
 			{
-				InstagibHud.parallaxPanel.Style.Transform = panelTransform;
-				InstagibHud.parallaxPanel.Style.Dirty();
+				MidAirHud.parallaxPanel.Style.Transform = panelTransform;
+				MidAirHud.parallaxPanel.Style.Dirty();
 			}
 
 			lastCameraPos = setup.Position;

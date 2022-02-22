@@ -1,7 +1,7 @@
 ﻿using System.Security;
 using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	public static class PlayerSettings
 	{
@@ -20,26 +20,26 @@ namespace Instagib
 		{
 			Host.AssertClient();
 			
-			Fov = Cookie.Get<float>( "Instagib.Fov", 100 );
-			ViewmodelOffset = Cookie.Get<float>( "Instagib.ViewmodelOffset", 0 );
-			ViewmodelVisible = Cookie.Get( "Instagib.ViewmodelVisible", true );
-			ViewmodelFlip = Cookie.Get( "Instagib.ViewmodelFlip", false );
-			ViewTiltMultiplier = Cookie.Get( "Instagib.ViewTiltMultiplier", 1.0f );
-			CrosshairColor = Color.Parse( Cookie.Get( "Instagib.CrosshairColor", Color.Red.Hex ) ) ?? Color.Green;
-			EnemyOutlineColor = Color.Parse( Cookie.Get( "Instagib.EnemyOutlineColor", Color.Red.Hex ) ) ?? Color.Red;
+			Fov = Cookie.Get<float>( "MidAir.Fov", 100 );
+			ViewmodelOffset = Cookie.Get<float>( "MidAir.ViewmodelOffset", 0 );
+			ViewmodelVisible = Cookie.Get( "MidAir.ViewmodelVisible", true );
+			ViewmodelFlip = Cookie.Get( "MidAir.ViewmodelFlip", false );
+			ViewTiltMultiplier = Cookie.Get( "MidAir.ViewTiltMultiplier", 1.0f );
+			CrosshairColor = Color.Parse( Cookie.Get( "MidAir.CrosshairColor", Color.Red.Hex ) ) ?? Color.Green;
+			EnemyOutlineColor = Color.Parse( Cookie.Get( "MidAir.EnemyOutlineColor", Color.Red.Hex ) ) ?? Color.Red;
 		}
 
 		public static void Save()
 		{
 			Host.AssertClient();
 			
-			Cookie.Set( "Instagib.Fov", Fov );
-			Cookie.Set( "Instagib.ViewmodelOffset", ViewmodelOffset );
-			Cookie.Set( "Instagib.ViewmodelVisible", ViewmodelVisible );
-			Cookie.Set( "Instagib.ViewmodelFlip", ViewmodelFlip );
-			Cookie.Set( "Instagib.ViewTiltMultiplier", ViewTiltMultiplier );
-			Cookie.Set( "Instagib.CrosshairColor", CrosshairColor.Hex );
-			Cookie.Set( "Instagib.EnemyOutlineColor", EnemyOutlineColor.Hex );
+			Cookie.Set( "MidAir.Fov", Fov );
+			Cookie.Set( "MidAir.ViewmodelOffset", ViewmodelOffset );
+			Cookie.Set( "MidAir.ViewmodelVisible", ViewmodelVisible );
+			Cookie.Set( "MidAir.ViewmodelFlip", ViewmodelFlip );
+			Cookie.Set( "MidAir.ViewTiltMultiplier", ViewTiltMultiplier );
+			Cookie.Set( "MidAir.CrosshairColor", CrosshairColor.Hex );
+			Cookie.Set( "MidAir.EnemyOutlineColor", EnemyOutlineColor.Hex );
 		}
 	}
 }

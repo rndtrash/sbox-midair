@@ -1,6 +1,6 @@
 ﻿using Sandbox;
 
-namespace Instagib
+namespace MidAir
 {
 	public class ViewModel : BaseViewModel
 	{
@@ -31,14 +31,7 @@ namespace Instagib
 		{
 			base.PostCameraSetup( ref camSetup );
 
-			if ( !PlayerSettings.ViewmodelVisible )
-			{
-				EnableDrawing = false;
-			}
-			else
-			{
-				EnableDrawing = true;
-			}
+			EnableDrawing = PlayerSettings.ViewmodelVisible;
 
 			if ( !Local.Pawn.IsValid() )
 				return;

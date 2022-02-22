@@ -3,7 +3,7 @@ using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace Instagib.UI.Elements
+namespace MidAir.UI.Elements
 {
 	public class Slider : Panel
 	{

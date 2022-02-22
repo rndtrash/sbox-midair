@@ -1,11 +1,11 @@
 ﻿using System;
-using Instagib.UI.Menus;
-using Instagib.UI.Elements;
+using MidAir.UI.Menus;
+using MidAir.UI.Elements;
 using Sandbox;
 using Sandbox.UI;
-using Instagib.Weapons;
+using MidAir.Weapons;
 
-namespace Instagib.UI.Menus
+namespace MidAir.UI.Menus
 {
 	public class SettingsMenu : BaseMenu
 	{
