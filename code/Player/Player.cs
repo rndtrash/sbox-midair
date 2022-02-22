@@ -112,22 +112,21 @@ namespace MidAir
 						var r = Trace.Ray( new( startPos, dir ), controller.BodyGirth * 0.75f ).WorldOnly().Run();
 						if ( r.Hit )
 						{
-							newVelocity = r.Normal;
+							newVelocity += r.Normal;
+							newVelocity = newVelocity.WithZ( 0.25f );
 							break;
 						}
 					}
 
 				if ( newVelocity.IsNearZeroLength && GroundEntity is not null )
 				{
-					newVelocity += rot.Forward;
+					newVelocity = rot.Forward + Vector3.Up * 0.5f;
 				}
 
 				if ( !newVelocity.IsNearZeroLength )
 				{
-					newVelocity = newVelocity.WithZ( 1 ).Normal;
-
 					controller.ClearGroundEntity();
-					Velocity += newVelocity * DashVelocity;
+					Velocity += newVelocity.Normal * DashVelocity;
 					controller.JumpEffects();
 				}
 			}
