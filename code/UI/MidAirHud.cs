@@ -5,7 +5,7 @@ using Sandbox.UI;
 
 namespace MidAir.UI
 {
-	public partial class MidAirHud : Sandbox.HudEntity<RootPanel>
+	public partial class MidAirHud : HudEntity<RootPanel>
 	{
 		public static MidAirHud currentHud;
 
@@ -81,7 +81,7 @@ namespace MidAir.UI
 			// We died
 			parallaxPanel?.DeleteChildren();
 
-			MessagesPanel.Instance.AddDeathMessage( "Railgun", killer );
+			MessagesPanel.Instance.AddDeathMessage( "Rocket Launcher", killer );
 		}
 
 		public void OnRespawn()
@@ -97,7 +97,7 @@ namespace MidAir.UI
 				return;
 
 			// We killed someone
-			MessagesPanel.Instance.AddFragMessage( "Railgun", victim.Client.Name, medals );
+			MessagesPanel.Instance.AddFragMessage( "Rocket Launcher", victim.Client.Name, medals );
 		}
 	}
 }

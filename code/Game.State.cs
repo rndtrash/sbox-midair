@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using MidAir.GameStates;
+﻿using MidAir.GameStates;
 using Sandbox;
+using System.Collections.Generic;
 
 namespace MidAir
 {
@@ -16,7 +16,7 @@ namespace MidAir
 		//
 		[Net] public string CurrentStateName { get; set; }
 		[Net] public string CurrentStateTime { get; set; }
-		[Net, Change( "(a, b) => MidAir.UI.MidAirHud.ToggleEndGameScreen( a, b )" )] public bool ShowEndGameScreen { get; set; }
+		[Net, Change( "MidAir.UI.MidAirHud.ToggleEndGameScreen" )] public bool ShowEndGameScreen { get; set; }
 		[Net] public bool InPlay { get; set; }
 
 		public struct MapVote

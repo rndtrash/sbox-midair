@@ -16,7 +16,7 @@ namespace MidAir.GameTypes
 		public FfaGameType()
 		{
 			GameTypeName = "Free-for-all";
-			GameTypeDescription = "";
+			GameTypeDescription = "Basic deathmatch game type";
 			IsExperimental = false;
 		}
 
@@ -29,7 +29,7 @@ namespace MidAir.GameTypes
 
 		public override bool GameShouldEnd()
 		{
-			if ( MaxFrags >= MidAirGlobal.FragLimit )
+			if ( MidAirGlobal.FragLimit != 0 && MaxFrags >= MidAirGlobal.FragLimit )
 				return true;
 
 			return base.GameShouldEnd();

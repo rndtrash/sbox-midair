@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System;
 
 namespace MidAir
 {
@@ -32,7 +33,14 @@ namespace MidAir
 			var packageTask = Package.Fetch( Global.GameTitle, true ).ContinueWith( t =>
 			{
 				var package = t.Result;
-				return package.GameConfiguration.MapList.ToArray();
+				try
+				{
+					return package.GameConfiguration.MapList.ToArray();
+				}
+				catch ( Exception e )
+				{
+					return new string[] { };
+				}
 			} );
 
 			return packageTask.Result;

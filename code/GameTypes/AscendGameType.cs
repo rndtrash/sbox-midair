@@ -17,7 +17,7 @@ namespace MidAir.GameTypes
 		{
 			GameTypeName = "Ascend";
 			GameTypeDescription = "Reach the goal to win!";
-			IsExperimental = false;
+			IsExperimental = true;
 		}
 
 		private static string GetClassForPosition( int position )
