@@ -29,6 +29,8 @@
 @SolidClass base(BaseProperties_tesa_midair) tags( Trigger ) 
 metadata
 {
+	entity_tool_name = "Goal (Ascend only)"
+	entity_tool_group = "MidAir"
 	auto_apply_material = "materials/tools/toolstrigger.vmat"
 }
 = midair_goal : ""
@@ -62,7 +64,13 @@ metadata
 //
 // MidAir.Entities.JumpPad
 //
-@PointClass base(BaseProperties_tesa_midair) = midair_jumppad : ""
+@PointClass base(BaseProperties_tesa_midair) 
+metadata
+{
+	entity_tool_name = "Jump Pad"
+	entity_tool_group = "MidAir"
+}
+= midair_jumppad : ""
 [
 	enable_shadows(boolean) { group = "Rendering" } : "Shadow Casting" : 1 : "Whether this entity should cast shadows or not"
 
@@ -75,6 +83,8 @@ metadata
 @SolidClass base(BaseProperties_tesa_midair) tags( Trigger ) 
 metadata
 {
+	entity_tool_name = "Safe Zone"
+	entity_tool_group = "MidAir"
 	auto_apply_material = "materials/tools/toolstrigger.vmat"
 }
 = midair_safezone : ""

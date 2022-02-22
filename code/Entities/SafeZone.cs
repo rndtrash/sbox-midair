@@ -3,6 +3,7 @@
 namespace MidAir.Entities
 {
 	[Library("midair_safezone")]
+	[Hammer.EntityTool( "Safe Zone", "MidAir" )]
 	public class SafeZone : BaseTrigger
 	{
 		public override void StartTouch( Entity other )

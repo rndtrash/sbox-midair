@@ -3,6 +3,7 @@
 namespace MidAir.Entities
 {
 	[Library( "midair_goal" )]
+	[Hammer.EntityTool( "Goal (Ascend only)", "MidAir" )]
 	public partial class Goal : BaseTrigger
 	{
 		public static Goal Instance { get; set; }
