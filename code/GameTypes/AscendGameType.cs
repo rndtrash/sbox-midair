@@ -20,6 +20,25 @@ namespace MidAir.GameTypes
 			IsExperimental = true;
 		}
 
+		public override void OnGameStart()
+		{
+			base.OnGameStart();
+
+			if (Entities.Checkpoint.First is null)
+			{
+				Log.Error( "This map is not valid since it has no checkpoints." );
+				return;
+			}
+
+			foreach (var cl in Client.All)
+			{
+				if ( cl.Pawn is not Player p )
+					continue;
+
+				p.CurrentCheckpoint = Entities.Checkpoint.First;
+			}
+		}
+
 		private static string GetClassForPosition( int position )
 		{
 			switch ( position )
@@ -46,6 +65,14 @@ namespace MidAir.GameTypes
 				return 0;
 
 			return p1.Position.Distance(Entities.Goal.Instance.Position) < p2.Position.Distance(Entities.Goal.Instance.Position) ? -1 : 1;
+		}
+
+		public override void CreateHUDElements( Panel RootPanel, Panel StaticHudPanel )
+		{
+			base.CreateHUDElements( RootPanel, StaticHudPanel );
+
+			// RootPanel.AddChild<CheckpointMark>();
+			Log.Error( "TODO: add checkpoint mark" );
 		}
 
 		public override void CreateWinnerElements( EndGameScreen winnerScreen, Panel parent )
@@ -122,13 +149,6 @@ namespace MidAir.GameTypes
 			}
 
 			winnerScreen.CreateWinnerParticles( particleCount );
-		}
-
-		public override void CreateHUDElements( Panel RootPanel, Panel StaticHudPanel )
-		{
-			base.CreateHUDElements( RootPanel, StaticHudPanel );
-
-			Log.Info( "TODO: add a panel with distance to the goal" );
 		}
 	}
 }

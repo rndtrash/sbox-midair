@@ -3,7 +3,7 @@ using Sandbox;
 
 namespace MidAir
 {
-	public class FirstPersonCamera : Camera
+	public class FirstPersonCamera : CameraMode
 	{
 		Vector3 lastPos;
 
@@ -22,10 +22,9 @@ namespace MidAir
 
 		public override void Update()
 		{
-			var pawn = Local.Pawn;
-			if ( pawn == null ) return;
+			if ( Local.Pawn is not Player p ) return;
 
-			var eyePos = pawn.EyePosition;
+			var eyePos = p.EyePosition;
 			if ( eyePos.Distance( lastPos ) < 250 )
 			{
 				Position = Vector3.Lerp( eyePos.WithZ( lastPos.z ), eyePos, 20.0f * Time.Delta );
@@ -35,10 +34,10 @@ namespace MidAir
 				Position = eyePos;
 			}
 
-			Rotation = pawn.EyeRotation;
+			Rotation = p.EyeRotation;
 
 			FieldOfView = PlayerSettings.Fov;
-			if ( pawn.ActiveChild is RocketLauncher { IsZooming: true } )
+			if ( p.ActiveChild is RocketLauncher { IsZooming: true } )
 			{
 				FieldOfView = PlayerSettings.ZoomedFov;
 			}
@@ -49,7 +48,7 @@ namespace MidAir
 			ZNear = 3;
 			ZFar = 20000;
 
-			Viewer = pawn;
+			Viewer = p;
 			lastPos = Position;
 		}
 	}

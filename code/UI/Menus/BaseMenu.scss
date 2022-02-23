@@ -32,7 +32,7 @@ iconpanel, icon {
 }
 
 text, label, input, textentry {
-    font-family: Inter;
+    font-family: Fusion;
     font-weight: 400;
     color: white;
 }
@@ -45,25 +45,25 @@ text.subtitle {
     top: 30px;
     position: absolute;
     color: $gray-500;
-    font-family: Poppins-ExtraBoldItalic;
+    font-family: Fusion;
 }
 
 text.title {
     font-size: 32px;
-    font-weight: 700;
+    //font-weight: 700;
     height: 60px;
     left: 50px;
     top: 50px;
     color: white;
     border-bottom: 5px solid $accent;
-    font-family: Poppins-ExtraBoldItalic;
+    font-family: Vectorizeregular;
 }
 
 text.big {
     font-size: 24px;
     padding: 25px 0;
-    font-weight: 700;
-    font-family: Poppins-ExtraBoldItalic;
+    //font-weight: 700;
+    font-family: 'FX300 Angular';
 }
 
 button, textentry {

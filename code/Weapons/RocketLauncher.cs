@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Sandbox;
+using System;
 using System.Collections.Generic;
-using Sandbox;
 using Trace = Sandbox.Trace;
 
 namespace MidAir.Weapons
@@ -8,11 +8,104 @@ namespace MidAir.Weapons
 	[Library( "rocketlauncher" )]
 	partial class RocketLauncher : BaseWeapon
 	{
+		public class Rocket : ModelEntity
+		{
+			public float FlightTime => 5f;
+			public float Speed => 1000f;
+			public float Range => 128f;
+			public TimeUntil Explode { get; internal set; }
+
+			public override void Spawn()
+			{
+				base.Spawn();
+
+				SetModel( "weapons/rocketlauncher/models/rocket.vmdl" );
+
+				Explode = FlightTime;
+			}
+
+			[Event.Tick.Server]
+			public void OnTick()
+			{
+				if ( LifeState != LifeState.Alive )
+					return;
+
+				if ( Explode < 0 )
+				{
+					Die();
+					return;
+				}
+
+				var velocity = Rotation.Forward * Speed;
+
+				var start = Position;
+				var end = start + velocity * Time.Delta;
+
+				var tr = Trace.Ray( start, end )
+					.UseHitboxes()
+					.Ignore( this )
+					.Ignore( Owner )
+					.Size( 10f )
+					.Run();
+				
+				Position = tr.EndPosition;
+				if ( tr.Hit )
+				{
+					Die();
+				}
+			}
+
+			public void Die()
+			{
+				Host.AssertServer();
+
+                LifeState = LifeState.Dead;
+
+				using ( Prediction.Off() )
+				{
+					Particles.Create( "particles/explosion.vpcf", Position );
+				}
+
+				foreach ( var overlap in FindInSphere( Position, Range ) )
+				{
+					if ( overlap == this ) continue;
+					if ( overlap is not ModelEntity ent || !ent.IsValid() ) continue;
+					if ( ent.LifeState != LifeState.Alive || !ent.PhysicsBody.IsValid() || ent.IsWorld ) continue;
+
+					var vec = overlap.Position - Position;
+					var dist = vec.Length;
+					{
+						if ( ent is Player { Controller: PlayerController playerController } )
+						{
+							vec += Vector3.Up * playerController.BodyHeight / 2;
+						}
+					}
+					var dir = vec.Normal;
+
+					var distanceFactor = 1.0f - Math.Clamp( dist / Range, 0, 1 );
+					distanceFactor *= 0.5f;
+					var force = distanceFactor * ent.PhysicsBody.Mass;
+					
+					if ( ent.GroundEntity != null )
+					{
+						ent.GroundEntity = null;
+						if ( ent is Player { Controller: PlayerController playerController } )
+							playerController.ClearGroundEntity();
+						else if ( ent is Rocket r )
+							r.Die();
+					}
+
+					ent.ApplyAbsoluteImpulse( dir * force );
+				}
+
+				Delete();
+			}
+		}
+
 		public ViewModel ViewModel => (ViewModelEntity as ViewModel) ?? default;
 
 		public override string ViewModelPath => "weapons/rocketlauncher/models/rocketlauncher.vmdl";
 		public override float PrimaryRate => 0.75f;
-		public override float SecondaryRate => 2f;
 
 		private Particles beamParticles;
 		public bool IsZooming { get; private set; }
@@ -28,7 +121,7 @@ namespace MidAir.Weapons
 		public override void SimulateAnimator( PawnAnimator anim )
 		{
 			base.SimulateAnimator( anim );
-			anim.SetParam( "holdtype", 3 );
+			anim.SetProperty( "holdtype", $"{3}" );
 		}
 
 		public override bool CanPrimaryAttack()
@@ -44,65 +137,7 @@ namespace MidAir.Weapons
 
 		public override bool CanSecondaryAttack() => false;
 
-		private void RocketJump( Vector3 pos, Vector3 normal )
-		{
-			ViewModel?.OnFire();
-
-			var sourcePos = pos;
-			var radius = 128;
-			var overlaps = Physics.GetEntitiesInSphere( sourcePos, radius );
-
-			foreach ( var overlap in overlaps )
-			{
-				if ( overlap is not ModelEntity ent || !ent.IsValid() ) continue;
-				if ( ent != Owner ) continue;
-				if ( ent.LifeState != LifeState.Alive || !ent.PhysicsBody.IsValid() || ent.IsWorld ) continue;
-
-				var dir = normal.Normal;
-				var dist = dir.Length;
-
-				if ( dist > radius ) continue;
-
-				var distanceFactor = 1.0f - Math.Clamp( dist / radius, 0, 1 );
-				distanceFactor *= 0.5f;
-				var force = distanceFactor * ent.PhysicsBody.Mass;
-
-				if ( ent.GroundEntity != null )
-				{
-					ent.GroundEntity = null;
-					if ( ent is Player { Controller: PlayerController playerController } )
-						playerController.ClearGroundEntity();
-				}
-
-				ent.ApplyAbsoluteImpulse( dir * force );
-			}
-
-			using ( Prediction.Off() )
-			{
-				Particles.Create( "particles/explosion.vpcf", pos );
-				PlaySound( "rocket_jump" );
-			}
-		}
-
-		public override void AttackSecondary()
-		{
-			// TODO: move all this shite to primary attack instead of ray
-			
-			base.AttackSecondary();
-
-			var pos = Owner.EyePosition;
-			var dir = Owner.EyeRotation.Forward;
-
-			foreach ( var tr in TraceBullet( pos, dir, 1f, 256f ) )
-			{
-				if ( !tr.Hit )
-					return;
-
-				RocketJump( tr.EndPos, tr.Normal );
-			}
-
-			RocketEffects();
-		}
+		public override void AttackSecondary() { }
 
 		public override void AttackPrimary()
 		{
@@ -115,66 +150,24 @@ namespace MidAir.Weapons
 				Owner.Client.AddInt( "totalShots" );
 			}
 
-			Shoot( Owner.EyePosition, Owner.EyeRotation.Forward );
+			Shoot( Trace.Ray( new Ray( Owner.EyePosition, Owner.EyeRotation.Forward ), 32 ).WorldOnly().Run().EndPosition, Owner.EyeRotation );
 		}
 
-		public IEnumerable<TraceResult> TraceBullet( Vector3 start, Vector3 dir, float radius = 2.0f, float dist = 100000f )
+		private void Shoot( Vector3 pos, Rotation dir )
 		{
-			using ( LagCompensation() )
+			// Particles
+			beamParticles?.Destroy( true );
+			beamParticles = Particles.Create( "weapons/rocketlauncher/particles/rocketlauncher_beam.vpcf", EffectEntity,
+				"muzzle", false );
+
+			if ( !IsServer ) return;
+
+			new Rocket()
 			{
-				bool InWater = Physics.TestPointContents( start, CollisionLayer.Water );
-
-				var end = start + dir * dist;
-				var tr = Trace.Ray( start, end )
-					.HitLayer( CollisionLayer.Water, !InWater )
-					.Ignore( Owner )
-					.Ignore( this )
-					.Size( radius )
-					.Run();
-
-				yield return tr;
-			}
-		}
-
-		private void Shoot( Vector3 pos, Vector3 dir )
-		{
-			foreach ( var tr in TraceBullet( pos, dir, 8f, 8192f ) )
-			{
-				if ( Prediction.FirstTime )
-				{
-					var impactParticles =
-						Particles.Create( "weapons/rocketlauncher/particles/rocketlauncher_impact.vpcf", tr.EndPos );
-					impactParticles.SetForward( 0, tr.Normal );
-				}
-
-				if ( tr.Entity is not Player )
-				{
-					tr.Surface.DoBulletImpact( tr );
-				}
-
-				// Particles
-				{
-					beamParticles?.Destroy( true );
-					beamParticles = Particles.Create( "weapons/rocketlauncher/particles/rocketlauncher_beam.vpcf", EffectEntity,
-						"muzzle", false );
-
-					beamParticles?.SetPosition( 1, tr.EndPos );
-
-					float particleCount = tr.Distance / 128f;
-					beamParticles?.SetPosition( 2, particleCount );
-				}
-
-				if ( !IsServer ) continue;
-				if ( !tr.Entity.IsValid() ) continue;
-
-				var damageInfo = DamageInfo.FromBullet( tr.EndPos, dir * 1000, 1000 )
-					.UsingTraceResult( tr )
-					.WithAttacker( Owner )
-					.WithWeapon( this );
-
-				tr.Entity.TakeDamage( damageInfo );
-			}
-
+				Position = pos,
+				Rotation = dir,
+				Owner = this.Owner
+			};
 			ShootEffects();
 		}
 
@@ -196,27 +189,13 @@ namespace MidAir.Weapons
 		}
 
 		[ClientRpc]
-		public virtual void RocketEffects()
-		{
-			Host.AssertClient();
-
-			ViewModelEntity?.SetAnimBool( "fire", true );
-			CrosshairPanel?.CreateEvent( "onattack" );
-
-			if ( IsLocalPawn )
-			{
-				_ = new Sandbox.ScreenShake.Perlin( 0.5f, 4.0f, 2.0f );
-			}
-		}
-
-		[ClientRpc]
 		public virtual void ShootEffects()
 		{
 			Host.AssertClient();
 
 			Sound.FromEntity( "rocketlauncher_fire", this );
 
-			ViewModelEntity?.SetAnimBool( "fire", true );
+			ViewModelEntity?.SetProperty( "fire", $"{true}" );
 			CrosshairPanel?.CreateEvent( "onattack" );
 
 			if ( IsLocalPawn )

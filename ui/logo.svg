@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 135.46667 135.46666"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="C:\Program Files (x86)\Steam\steamapps\common\sbox\addons\sbox-midair\ui\logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#f1edea"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="1"
+     inkscape:cx="33"
+     inkscape:cy="181"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3219" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path5293"
+       style="fill:#63c9d8;fill-opacity:1;stroke:none;stroke-width:2.68653;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 67.733464,109.93439 c 0,0 -6.716295,-6.41496 -6.716315,-14.328237 V 80.830207 H 74.44978 v 14.775946 c -1.9e-5,7.913277 -6.716316,14.328237 -6.716316,14.328237 z"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       id="path6272"
+       style="fill:#63c9d8;fill-opacity:1;stroke:none;stroke-width:1.46024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 64.082732,79.663754 -3.042167,-6.6928 4.330572,1.968387 2.362195,-8.661217 2.362196,8.661217 4.330572,-1.968387 -3.042167,6.6928 z" />
+    <path
+       id="path15345"
+       style="fill:#63c9d8;fill-opacity:1;stroke:none;stroke-width:3.175;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 47.223224,42.730208 35.31698,54.636458 v 12.964583 0.264583 12.964583 l 11.906244,11.90625 H 59.402836 V 80.90152 c 0,-0.02384 9.84e-4,-0.04749 10e-4,-0.07131 h -8.211899 l -3.968748,-3.96875 v -8.995833 -0.264583 -8.995833 l 3.968748,-3.96875 h 8.211899 c -1.6e-5,-0.02382 -10e-4,-0.04747 -10e-4,-0.07131 V 42.730208 Z m 28.840605,0 v 11.834937 c 0,0.02384 -0.001,0.04749 -0.001,0.07131 h 8.211899 l 3.968748,3.96875 v 8.995833 0.264583 8.995833 l -3.968748,3.96875 h -8.211899 c 1.6e-5,0.02382 0.001,0.04748 0.001,0.07131 V 92.736457 H 88.243441 L 100.14969,80.830207 V 67.865624 67.601041 54.636458 L 88.243441,42.730208 Z" />
+  </g>
+  <metadata
+     id="metadata3217">
+    <rdf:RDF>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by/4.0/" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

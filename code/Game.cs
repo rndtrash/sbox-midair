@@ -23,6 +23,8 @@ namespace MidAir
 			Precache.Add( "weapons/rocketlauncher/particles/rocketlauncher_pulse.vpcf" );
 			Precache.Add( "weapons/rocketlauncher/sounds/rocketlauncher_fire.vsnd" );
 
+			Precache.Add( "weapons/rocketlauncher/models/rocket.vmdl" );
+
 			if ( IsClient )
 			{
 				PlayerSettings.Load();
@@ -98,6 +100,7 @@ namespace MidAir
 
 			// Killstreak tracking
 			attacker.CurrentStreak++;
+			attacker.Client.AddInt( "kills" );
 			CurrentState.OnKill( attacker.Client, victim.Client );
 
 			PlayerDiedRpc( To.Single( victim ), attacker );

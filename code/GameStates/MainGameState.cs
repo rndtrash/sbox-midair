@@ -22,6 +22,7 @@ namespace MidAir.GameStates
 				entity.SetInt( "totalHits", 0 );
 			}
 
+			Event.Run( "midair.start" );
 			Game.Instance.GameType.OnGameStart();
 			GameServices.StartGame();
 		}

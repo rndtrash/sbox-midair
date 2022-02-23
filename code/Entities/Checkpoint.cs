@@ -3,10 +3,13 @@
 namespace MidAir.Entities
 {
 	[Library( "midair_goal" )]
-	[Hammer.EntityTool( "Goal (Ascend only)", "MidAir" )]
-	public partial class Goal : BaseTrigger
+	[Hammer.EntityTool( "Checkpoint (Ascend only)", "MidAir" )]
+	public partial class Checkpoint : BaseTrigger
 	{
-		public static Goal Instance { get; set; }
+		public static Checkpoint First { get; internal set; }
+
+		[Property] public Checkpoint Next { get; set; }
+		[Property] public bool IsFirst { get; internal set; }
 
 		public override void Spawn()
 		{
@@ -20,7 +23,8 @@ namespace MidAir.Entities
 
 			Transmit = TransmitType.Always;
 
-			Instance = this;
+			if ( IsFirst )
+				First = this;
 
 			Disable();
 		}
@@ -28,8 +32,9 @@ namespace MidAir.Entities
 		public override void ClientSpawn()
 		{
 			base.ClientSpawn();
-
-			Instance = this;
+			
+			if ( IsFirst )
+				First = this;
 		}
 
 		public override void StartTouch( Entity other )

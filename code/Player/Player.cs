@@ -1,6 +1,7 @@
 ﻿using MidAir.UI;
 using MidAir.Weapons;
 using Sandbox;
+using Sandbox.Component;
 using System.Linq;
 using Event = Sandbox.Event;
 
@@ -8,13 +9,15 @@ namespace MidAir
 {
 	public partial class Player : Sandbox.Player
 	{
-		public float DashTimeout => 1.5f;
-		public float DashVelocity => 300f;
+		public float DashTimeout => 0.5f;
+		public float DashVelocity => 350f;
+		public float MinimalDistantionAboveGround => 5f;
 
 		[Net, Local] private TimeSince TimeSinceSpawn { get; set; }
 		public bool IsSpawnProtected => TimeSinceSpawn < 3;
 		[Net] public bool IsInSafeZone { get; set; }
 		[Net, Predicted] public float LastDash { get; set; }
+		[Net, Local] public Entities.Checkpoint CurrentCheckpoint { get; set; }
 
 		private Particles speedLines;
 
@@ -52,7 +55,7 @@ namespace MidAir
 
 			Controller = new PlayerController();
 			Animator = new StandardPlayerAnimator();
-			Camera = new FirstPersonCamera();
+			CameraMode = new FirstPersonCamera();
 
 			EnableAllCollisions = true;
 			EnableDrawing = true;
@@ -86,8 +89,6 @@ namespace MidAir
 
 			if ( Time.Now - LastDash >= DashTimeout && Input.Down( InputButton.Attack2 ) ) // TODO: disable dash if the pawn gets hit by a rocket
 			{
-				LastDash = Time.Now;
-
 				var rot = EyeRotation.Angles().WithPitch( 0 ).ToRotation();
 				Vector3[][] rayDirs = new Vector3[][]
 				{
@@ -118,22 +119,25 @@ namespace MidAir
 						}
 					}
 
-				if ( newVelocity.IsNearZeroLength && GroundEntity is not null )
+				if ( newVelocity.IsNearZeroLength && GroundEntity is not null && Velocity.WithZ( 0 ).Length < DashVelocity )
 				{
-					newVelocity = rot.Forward + Vector3.Up * 0.5f;
+					newVelocity = Input.Left * EyeRotation.Left + (Input.Forward != 0 ? Input.Forward : 1) * EyeRotation.Forward + Vector3.Up * 0.5f;
 				}
 
 				if ( !newVelocity.IsNearZeroLength )
 				{
+					LastDash = Time.Now;
+
 					controller.ClearGroundEntity();
 					Velocity += newVelocity.Normal * DashVelocity;
 					controller.JumpEffects();
 				}
 			}
 
+			var glow = Components.GetOrCreate<Glow>();
 			if ( cl == Local.Client )
 			{
-				GlowActive = false;
+				glow.Active = false;
 
 				//
 				// Speed lines
@@ -156,10 +160,9 @@ namespace MidAir
 				return;
 			}
 
-			GlowActive = true;
-			GlowState = GlowStates.On;
-			GlowDistanceStart = -32;
-			GlowDistanceEnd = 4096;
+			glow.Active = true;
+			glow.RangeMin = -32;
+			glow.RangeMax = 4096;
 		}
 
 		[Event.Tick.Client]
@@ -178,7 +181,7 @@ namespace MidAir
 
 			hsvColor.Value = 1.0f;
 			hsvColor.Saturation = 1.0f;
-			GlowColor = hsvColor.ToColor();
+			Components.GetOrCreate<Glow>().Color = hsvColor.ToColor();
 		}
 
 		public override void OnKilled()
@@ -187,8 +190,8 @@ namespace MidAir
 
 			Velocity = Vector3.Zero;
 
-			Camera = new LookAtCamera();
-			var lookAtCamera = Camera as LookAtCamera;
+			var lookAtCamera = new LookAtCamera();
+			CameraMode = lookAtCamera;
 
 			lookAtCamera.TargetEntity = LastAttacker;
 			lookAtCamera.Origin = EyePosition;
@@ -244,6 +247,12 @@ namespace MidAir
 			}
 		}
 
+		public bool IsMidAir()
+		{
+			return !IsInSafeZone
+				&& !Trace.Ray( new Ray( Position, Vector3.Down ), MinimalDistantionAboveGround ).Run().Hit;
+		}
+
 		public override void TakeDamage( DamageInfo info )
 		{
 			if ( IsSpawnProtected || info.Flags.HasFlag( DamageFlags.PhysicsImpact ) )
@@ -254,12 +263,28 @@ namespace MidAir
 
 			lastDamageInfo = info;
 
-			base.TakeDamage( info );
+			if ( LifeState == LifeState.Dead )
+				return;
 
-			if ( info.Attacker is Player attacker )
+			LastAttacker = info.Attacker;
+            LastAttackerWeapon = info.Weapon;
+
+			if ( info.Attacker is not Player attacker )
 			{
-				attacker.OnDamageOther( To.Single( attacker ), info.Position, info.Damage );
+				if ( IsServer && Health > 0f && LifeState == LifeState.Alive && IsMidAir() )
+				{
+					Health = 0f;
+					OnKilled();
+					this.ProceduralHitReaction( info );
+				}
+				
+				return;
 			}
+
+			this.ProceduralHitReaction( info );
+
+			attacker.OnDamageOther( To.Single( attacker ), info.Position, info.Damage );
+			PlaySound( "rocket_jump" );
 		}
 	}
 }

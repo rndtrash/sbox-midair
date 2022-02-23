@@ -39,6 +39,7 @@ namespace MidAir
 				}
 				catch ( Exception e )
 				{
+					Log.Error( $"{e}" );
 					return new string[] { };
 				}
 			} );

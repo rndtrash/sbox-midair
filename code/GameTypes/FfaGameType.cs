@@ -25,6 +25,7 @@ namespace MidAir.GameTypes
 			base.OnFrag( who, whom );
 
 			MaxFrags = Math.Max( who.GetValue( "kills", 0 ), MaxFrags );
+			Log.Info( $"{MaxFrags}" );
 		}
 
 		public override bool GameShouldEnd()

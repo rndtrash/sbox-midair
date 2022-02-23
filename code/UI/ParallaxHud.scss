@@ -5,8 +5,8 @@
 }
 
 text, label, input, textentry, icon, iconpanel {
-    font-family: Poppins;
-    font-weight: 700;
+    font-family: Fusion;
+    //font-weight: light;
     color: white;
 }
 
@@ -72,7 +72,7 @@ text.menu-prompt {
     flex-direction: row;
 
     .frag-message {
-        backdrop-filter: blur( 20px ) brightness( 0.5 );
+        backdrop-filter: brightness( 0.5 );
         border: 2px solid rgba( black, 0.4 );
         flex-direction: row;
         text-align: center;
@@ -221,7 +221,7 @@ KillFeed {
 
     > KillFeedEntry {
         border-radius: 10px;
-        backdrop-filter: blur( 20px ) brightness( 0.5 );
+        backdrop-filter: brightness( 0.5 );
         border: 2px solid rgba( black, 0.4 );
         background-color: transparent;
         height: 50px;

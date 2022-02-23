@@ -3,7 +3,7 @@ using Sandbox;
 
 namespace MidAir
 {
-	public partial class LookAtCamera : Camera
+	public partial class LookAtCamera : CameraMode
 	{
 		/// <summary>
 		/// Origin of the camera
