@@ -11,17 +11,17 @@ namespace MidAir
 	{
 		public float DashTimeout => 0.5f;
 		public float DashVelocity => 350f;
-		public float MinimalDistantionAboveGround => 5f;
+		public float MinimalDistantionAboveGround => 70f;
 
 		[Net, Local] private TimeSince TimeSinceSpawn { get; set; }
+		[Net, Local] public TimeSince LastDash { get; set; }
+		[Net, Local] public TimeSince LastHit { get; set; }
 		public bool IsSpawnProtected => TimeSinceSpawn < 3;
 		[Net] public bool IsInSafeZone { get; set; }
-		[Net, Predicted] public float LastDash { get; set; }
+		[Net, Local] public bool AirControl { get; set; } = true;
 		[Net, Local] public Entities.Checkpoint CurrentCheckpoint { get; set; }
 
 		private Particles speedLines;
-
-		private DamageInfo lastDamageInfo;
 
 		//
 		// Stats used for medals
@@ -87,7 +87,7 @@ namespace MidAir
 				TakeDamage( DamageInfo.Generic( 10000 ) );
 			}
 
-			if ( Time.Now - LastDash >= DashTimeout && Input.Down( InputButton.Attack2 ) ) // TODO: disable dash if the pawn gets hit by a rocket
+			if ( LastDash >= DashTimeout && Input.Down( InputButton.Attack2 ) ) // TODO: disable dash if the pawn gets hit by a rocket
 			{
 				var rot = EyeRotation.Angles().WithPitch( 0 ).ToRotation();
 				Vector3[][] rayDirs = new Vector3[][]
@@ -121,18 +121,21 @@ namespace MidAir
 
 				if ( newVelocity.IsNearZeroLength && GroundEntity is not null && Velocity.WithZ( 0 ).Length < DashVelocity )
 				{
-					newVelocity = Input.Left * EyeRotation.Left + (Input.Forward != 0 ? Input.Forward : 1) * EyeRotation.Forward + Vector3.Up * 0.5f;
+					newVelocity = Input.Left * EyeRotation.Left + (Input.Forward != 0 || Input.Left != 0 ? Input.Forward : 1) * EyeRotation.Forward + Vector3.Up * 0.5f;
 				}
 
 				if ( !newVelocity.IsNearZeroLength )
 				{
-					LastDash = Time.Now;
+					LastDash = 0;
 
 					controller.ClearGroundEntity();
 					Velocity += newVelocity.Normal * DashVelocity;
 					controller.JumpEffects();
 				}
 			}
+
+			if ( !AirControl && GroundEntity is not null )
+				AirControl = true;
 
 			var glow = Components.GetOrCreate<Glow>();
 			if ( cl == Local.Client )
@@ -250,19 +253,17 @@ namespace MidAir
 		public bool IsMidAir()
 		{
 			return !IsInSafeZone
-				&& !Trace.Ray( new Ray( Position, Vector3.Down ), MinimalDistantionAboveGround ).Run().Hit;
+				&& !Trace.Ray( new Ray( Position, Vector3.Down ), MinimalDistantionAboveGround ).WorldOnly().Run().Hit;
 		}
 
 		public override void TakeDamage( DamageInfo info )
 		{
 			if ( IsSpawnProtected || info.Flags.HasFlag( DamageFlags.PhysicsImpact ) )
 				return;
-
+			
 			if ( IsFriendly( info.Attacker ) )
 				return;
-
-			lastDamageInfo = info;
-
+			
 			if ( LifeState == LifeState.Dead )
 				return;
 
@@ -271,20 +272,26 @@ namespace MidAir
 
 			if ( info.Attacker is not Player attacker )
 			{
-				if ( IsServer && Health > 0f && LifeState == LifeState.Alive && IsMidAir() )
-				{
-					Health = 0f;
-					OnKilled();
-					this.ProceduralHitReaction( info );
-				}
-				
+				return;
+			}
+			
+			this.ProceduralHitReaction( info );
+
+			if ( IsServer && Health > 0f && LifeState == LifeState.Alive && info.Attacker != this && IsMidAir() )
+			{
+				Log.Info( $"Kill height: {Trace.Ray( new Ray( Position, Vector3.Down ), 1000f ).WorldOnly().Run().Distance}" );
+				Health = 0f;
+				OnKilled();
 				return;
 			}
 
-			this.ProceduralHitReaction( info );
-
 			attacker.OnDamageOther( To.Single( attacker ), info.Position, info.Damage );
-			PlaySound( "rocket_jump" );
+
+			LastDash = -DashTimeout; // Timing out by twice the dash timeouts
+			AirControl = false; // Disabling until the player touches some grass
+
+			if ( LifeState == LifeState.Alive )
+				PlaySound( "rocket_jump" );
 		}
 	}
 }

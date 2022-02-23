@@ -24,7 +24,7 @@ namespace MidAir
 		}
 
 		public float Speed => 310.0f;
-		public float AirSpeed => 240.0f;
+		public float AirSpeed => Pawn is Player p && p.AirControl ? 240.0f : 5.0f;
 		public float Acceleration => 8.0f;
 		public float AirAcceleration => 8.0f;
 		public float GroundFriction => 4.0f;
@@ -205,19 +205,11 @@ namespace MidAir
 		public virtual void LimitSpeed()
 		{
 			float lerpRate = 5f;
-			if ( GroundEntity != null )
+			var sl = GroundEntity == null ? AirSpeedLimit : SpeedLimit;
+			
+			if ( Velocity.WithZ( 0 ).Length > sl )
 			{
-				if ( Velocity.WithZ( 0 ).Length > SpeedLimit )
-				{
-					Velocity = Velocity.LerpTo( (Velocity.Normal * AirSpeedLimit).WithZ( Velocity.z ), lerpRate * Time.Delta );
-				}
-			}
-			else
-			{
-				if ( Velocity.WithZ( 0 ).Length > SpeedLimit )
-				{
-					Velocity = Velocity.LerpTo( (Velocity.Normal * SpeedLimit).WithZ( Velocity.z ), lerpRate * Time.Delta );
-				}
+				Velocity = Velocity.LerpTo( (Velocity.Normal * sl).WithZ( Velocity.z ), lerpRate * Time.Delta );
 			}
 		}
 

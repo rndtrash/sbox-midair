@@ -73,11 +73,11 @@ namespace MidAir.Weapons
 					if ( ent.LifeState != LifeState.Alive || !ent.PhysicsBody.IsValid() || ent.IsWorld ) continue;
 
 					var vec = overlap.Position - Position;
-					var dist = vec.Length;
+					var dist = vec.Length; // Measure distance to feet and direction to head
 					{
 						if ( ent is Player { Controller: PlayerController playerController } )
 						{
-							vec += Vector3.Up * playerController.BodyHeight / 2;
+							vec += Vector3.Up * playerController.BodyHeight;
 						}
 					}
 					var dir = vec.Normal;
@@ -90,12 +90,22 @@ namespace MidAir.Weapons
 					{
 						ent.GroundEntity = null;
 						if ( ent is Player { Controller: PlayerController playerController } )
+						{
 							playerController.ClearGroundEntity();
+							if ( ent != Owner )
+								force *= 5; // Boost the force if we've hit the enemy
+						}
 						else if ( ent is Rocket r )
 							r.Die();
 					}
 
 					ent.ApplyAbsoluteImpulse( dir * force );
+					if ( ent is Player p )
+					{
+						p.TakeDamage(
+							DamageInfo.Explosion( Position, dir * force, 1 ).WithAttacker( Owner )
+							);
+					}
 				}
 
 				Delete();
