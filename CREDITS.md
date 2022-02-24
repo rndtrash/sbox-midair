@@ -8,3 +8,9 @@ is licensed under Creative Commons Attribution (http://creativecommons.org/licen
 ## Fonts
 
 https://github.com/NR74W/WipEout-Fonts
+
+## Textures
+
+### Skybox
+
+https://polyhaven.com/a/abandoned_slipway slightly modified

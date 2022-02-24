@@ -127,6 +127,7 @@ namespace MidAir
 				if ( !newVelocity.IsNearZeroLength )
 				{
 					LastDash = 0;
+					AirControl = true;
 
 					controller.ClearGroundEntity();
 					Velocity += newVelocity.Normal * DashVelocity;
@@ -260,38 +261,44 @@ namespace MidAir
 		{
 			if ( IsSpawnProtected || info.Flags.HasFlag( DamageFlags.PhysicsImpact ) )
 				return;
-			
+
 			if ( IsFriendly( info.Attacker ) )
 				return;
-			
-			if ( LifeState == LifeState.Dead )
+
+			if ( LifeState == LifeState.Dead || Health <= 0 )
 				return;
 
 			LastAttacker = info.Attacker;
-            LastAttackerWeapon = info.Weapon;
+			LastAttackerWeapon = info.Weapon;
 
-			if ( info.Attacker is not Player attacker )
-			{
-				return;
-			}
-			
 			this.ProceduralHitReaction( info );
 
-			if ( IsServer && Health > 0f && LifeState == LifeState.Alive && info.Attacker != this && IsMidAir() )
+			if ( IsServer )
 			{
-				Log.Info( $"Kill height: {Trace.Ray( new Ray( Position, Vector3.Down ), 1000f ).WorldOnly().Run().Distance}" );
-				Health = 0f;
-				OnKilled();
-				return;
+				if ( info.Attacker is not Player attacker ) // if the damage was caused by `kill` command
+				{
+					Health = 0f;
+					OnKilled();
+					return;
+				}
+
+				if ( info.Attacker != this ) // ...or we were hit by another player
+				{
+					attacker.OnDamageOther( To.Single( attacker ), info.Position, info.Damage );
+
+					if ( IsMidAir() )
+					{
+						Health = 0f;
+						OnKilled();
+						return;
+					}
+
+					LastDash = -DashTimeout; // Timing out by twice the dash timeouts
+					AirControl = false; // Disabling until the player touches some grass or does a dash
+				}
+
+				PlaySound( "rocket_jump" ); // else it was probably a rocket jump
 			}
-
-			attacker.OnDamageOther( To.Single( attacker ), info.Position, info.Damage );
-
-			LastDash = -DashTimeout; // Timing out by twice the dash timeouts
-			AirControl = false; // Disabling until the player touches some grass
-
-			if ( LifeState == LifeState.Alive )
-				PlaySound( "rocket_jump" );
 		}
 	}
 }
