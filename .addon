@@ -14,5 +14,12 @@
   ],
   "HasCode": true,
   "CodePath": "code",
-  "RootNamespace": "MidAir"
+  "RootNamespace": "MidAir",
+  "Metadata": {
+    "MapList": [
+      "facepunch.construct"
+    ],
+    "MaxPlayers": 64,
+    "MinPlayers": 2
+  }
 }

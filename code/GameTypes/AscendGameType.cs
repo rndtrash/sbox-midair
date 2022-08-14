@@ -11,8 +11,6 @@ namespace MidAir.GameTypes
 	[Library( "gametype_ascend", Title = "Ascend", Description = "Reach the goal to win!" )]
 	public partial class AscendGameType : BaseGameType
 	{
-		[Net] public Player Winner { get; set; } = null;
-
 		public AscendGameType()
 		{
 			GameTypeName = "Ascend";
@@ -44,8 +42,10 @@ namespace MidAir.GameTypes
 			switch ( position )
 			{
 				case 1:
-					return "second";
+					return "first";
 				case 2:
+					return "second";
+				case 3:
 					return "third";
 			}
 			return "";
@@ -64,7 +64,7 @@ namespace MidAir.GameTypes
 			if ( c1.Pawn is not Player p1 || c2.Pawn is not Player p2 )
 				return 0;
 
-			return p1.Position.Distance(Entities.Goal.Instance.Position) < p2.Position.Distance(Entities.Goal.Instance.Position) ? -1 : 1;
+			return p1.Position.Distance(Entities.Checkpoint.Last.Position) < p2.Position.Distance(Entities.Checkpoint.Last.Position) ? -1 : 1;
 		}
 
 		public override void CreateHUDElements( Panel RootPanel, Panel StaticHudPanel )

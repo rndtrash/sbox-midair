@@ -47,9 +47,7 @@ namespace MidAir.GameStates
 		{
 			var ts = Time.Now - Game.Instance.GameType.GameBeginning;
 			var timeEndSpan = TimeSpan.FromSeconds( Math.Max( MidAirGlobal.TimeLimit != 0 ? MidAirGlobal.TimeLimit - ts : ts, 0 ) );
-			var minutes = timeEndSpan.Minutes;
-			var seconds = timeEndSpan.Seconds;
-			return $"{minutes:D2}:{seconds:D2}";
+			return GetTimeString( timeEndSpan );
 		}
 
 		public override void Tick()

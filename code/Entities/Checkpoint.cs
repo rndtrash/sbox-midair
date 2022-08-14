@@ -7,6 +7,7 @@ namespace MidAir.Entities
 	public partial class Checkpoint : BaseTrigger
 	{
 		public static Checkpoint First { get; internal set; }
+		public static Checkpoint Last { get; internal set; }
 
 		[Property] public Checkpoint Next { get; set; }
 		[Property] public bool IsFirst { get; internal set; }
@@ -25,6 +26,8 @@ namespace MidAir.Entities
 
 			if ( IsFirst )
 				First = this;
+			else if ( !Next.IsValid )
+				Last = this;
 
 			Disable();
 		}
@@ -32,9 +35,11 @@ namespace MidAir.Entities
 		public override void ClientSpawn()
 		{
 			base.ClientSpawn();
-			
+
 			if ( IsFirst )
 				First = this;
+			else if ( !Next.IsValid )
+				Last = this;
 		}
 
 		public override void StartTouch( Entity other )

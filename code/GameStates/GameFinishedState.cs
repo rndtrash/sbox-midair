@@ -19,13 +19,7 @@ namespace MidAir.GameStates
 				stateEnds = 1000;
 		}
 
-		public override string StateTime()
-		{
-			var timeEndSpan = TimeSpan.FromSeconds( stateEnds );
-			var minutes = timeEndSpan.Minutes;
-			var seconds = timeEndSpan.Seconds;
-			return $"{minutes:D2}:{seconds:D2}";
-		}
+		public override string StateTime() => GetTimeString( stateEnds );
 
 		public override void Tick()
 		{

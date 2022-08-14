@@ -1,11 +1,13 @@
-﻿Controls {
+﻿@import "../_Colors.scss";
+
+Controls {
     position: absolute;
     top: 120px;
     left: 50px;
     padding: 10px 20px;
     flex-direction: column;
     border-radius: 10px;
-    backdrop-filter: brightness( 0.5 );
+    background-color: $hud-background;
     border: 2px solid rgba( black, 0.4 );
     min-width: 250px;
 

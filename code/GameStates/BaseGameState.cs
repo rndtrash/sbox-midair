@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Sandbox;
+using System;
 using System.Linq;
-using Sandbox;
 
 namespace MidAir.GameStates
 {
@@ -17,10 +17,17 @@ namespace MidAir.GameStates
 
 		public virtual string StateTime()
 		{
-			var timeEndSpan = TimeSpan.FromSeconds( stateStart );
-			var minutes = timeEndSpan.Minutes;
-			var seconds = timeEndSpan.Seconds;
-			return $"{minutes:D2}:{seconds:D2}";
+			return GetTimeString( stateStart );
+		}
+
+		protected string GetTimeString( float s ) => GetTimeString( TimeSpan.FromSeconds( s ) );
+
+		protected string GetTimeString( TimeSpan ts )
+		{
+			var minutes = ts.Minutes;
+			var seconds = ts.Seconds;
+			var milliseconds = ts.Milliseconds / 10; // we care only about the first two digits
+			return $"{minutes:D2}:{seconds:D2}.{milliseconds:D2}";
 		}
 
 		public virtual void Tick() { }
